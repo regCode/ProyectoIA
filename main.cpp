@@ -316,7 +316,24 @@ vector< vector< tuple<int, int> > > solucion_inicial(void){
 		}
 	}
 
-	solInicial.push_back(recorridoBus);
+	vector< tuple<int, int> > bus;
+
+	for(int i = 0; i < B; ++i){
+		solInicial.push_back(bus);
+	} 
+
+	int randomSelect;
+
+	while(recorridoBus.size() != 0){
+		for(int i = B-1; i >= 0; --i){
+			if(recorridoBus.size() != 0){			
+				randomSelect = rand() % recorridoBus.size();	
+				solInicial[i].push_back(recorridoBus[randomSelect]);
+				recorridoBus.erase(recorridoBus.begin() + randomSelect);
+			}
+		}
+	}
+
 	return solInicial;
 
 }
