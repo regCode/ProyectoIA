@@ -87,19 +87,6 @@ vector<string> split(string str, char delimiter) {
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-/*
-vector<int> visita_encuentro(void){
-  vector<int> visita_necesaria(P);
-  for(int i = 0; i < P; ++i){
-  	cout << personasPE[i] << "/" << Q;
-    visita_necesaria[i] = ceil((float)personasPE[i]/(float)Q);
-    cout << " " << visita_necesaria[i] << endl;
-  }
-  return visita_necesaria;
-}
-*/
-
-
 vector<int> obtener_lista(string str) {
   str = trim(str);
   vector<int> internal;
@@ -113,7 +100,6 @@ vector<int> obtener_lista(string str) {
   
   return internal;
 }
-
 
 void lectura_instacia(char *archivo){
   
@@ -187,6 +173,16 @@ void imprimirVector(vector<int> lista){
 	cout << endl;
 }
 
+void imprimir_sol(vector< vector< tuple<int, int> > > solInicial){
+	for(int i = 0; i < solInicial.size(); ++i){
+		cout << i+1 << ": ";
+		for(int j = 0; j < solInicial[i].size(); ++j){
+			cout << "(" << get<0>(solInicial[i][j])+1 << "," << get<1>(solInicial[i][j])+1 << "), ";  
+		}
+		cout << endl;
+	}
+}
+
 bool es_factible(vector< vector< tuple<int, int> > > candidatoSolucion){
 	
 	vector<int> personasPorSalvar = personasPE;
@@ -197,7 +193,8 @@ bool es_factible(vector< vector< tuple<int, int> > > candidatoSolucion){
 	for(int i = 0; i < candidatoSolucion.size(); ++i){
 		for(int j = 0; j < candidatoSolucion[i].size(); ++j){
 			
-			if(personasPorSalvar[get<0>(candidatoSolucion[i][j])] == 0){ //No sebe ir a un refugio vacio 
+			if(personasPorSalvar[get<0>(candidatoSolucion[i][j])] == 0){ //No sebe ir a un pto de encuento vacio 
+				cout << "el punto de encuento " << get<0>(candidatoSolucion[i][j])+1 << " esta vacio " << endl;
 				return false;
 			}
 			else if(personasPorSalvar[get<0>(candidatoSolucion[i][j])] < Q){
@@ -216,15 +213,19 @@ bool es_factible(vector< vector< tuple<int, int> > > candidatoSolucion){
 	//imprimirVector(capacidadRestante);
 
 	for(int i = 0; i < personasPorSalvar.size(); ++i){
-		if(personasPorSalvar[i] > 0)
+		if(personasPorSalvar[i] > 0){
+			cout << "quedan " << personasPorSalvar[i] << " personas en el punto " << i+1 <<endl;
 			return false;
+		}
 	}
 
 	for(int i = 0; i < capacidadRestante.size(); ++i){
-		if(capacidadRestante[i] < 0)
+		if(capacidadRestante[i] < 0){
+			cout << "se excede en " << capacidadRestante[i] << " personas en el refugio " << i+1 << endl;
 			return false;
-	}	
-
+		}	
+	}
+	
 	return true;
 }
 
@@ -259,6 +260,65 @@ int funcion_evaluacion(vector< vector< tuple<int, int> > > solucion){
 	}
 
 	return max;
+}
+
+vector<int> visita_necesaria(void){
+  vector<int> visita_necesaria(P);
+  for(int i = 0; i < P; ++i){
+  	//cout << personasPE[i] << "/" << Q;
+    visita_necesaria[i] = ceil((float)personasPE[i]/(float)Q);
+    //cout << " " << visita_necesaria[i] << endl;
+  }
+  return visita_necesaria;
+}
+
+
+vector< vector< tuple<int, int> > > solucion_inicial(void){
+	
+	vector< vector< tuple<int, int> > > solInicial;
+	vector<tuple<int, int> >  recorridoBus;
+
+	vector<int> personasPorSalvar = personasPE;
+	vector<int> capacidadRestante = capacidadS;
+
+	vector<int> viajesNecesarios = visita_necesaria(); // Ve la cantidad de viajes necesarias a los refugios
+
+	vector<int> finEvacuacion (B, 0);
+
+	int refugio;
+	int genteBus; 
+
+	for(int i = 0; i < viajesNecesarios.size(); ++i){
+		for(int j = 0; j < viajesNecesarios[i]; ++j){
+			do{
+				refugio = rand() % S; //elegimos un refugio aleatorio
+				if(personasPorSalvar[i] <= capacidadRestante[refugio]){
+					if(personasPorSalvar[i] < Q)
+						genteBus = personasPorSalvar[i];
+					else
+						genteBus = Q;
+					
+				}
+				else{ //personasPorSalvar[i] > capacidadRestante[refugio]
+					if(capacidadRestante[refugio] >= Q)
+						genteBus = Q;
+					else
+						genteBus = capacidadRestante[refugio];
+				}
+				
+			}while(personasPorSalvar[i] <= 0 || capacidadRestante[refugio] <= 0);
+
+			personasPorSalvar[i]-= genteBus;
+			capacidadRestante[refugio]-= genteBus;
+
+			recorridoBus.push_back(tuple<int, int>(i, refugio));
+
+		}
+	}
+
+	solInicial.push_back(recorridoBus);
+	return solInicial;
+
 }
 
 
@@ -340,16 +400,6 @@ vector< vector< tuple<int, int> > > solucion_inicial_greedy(void){
 	return solInicial;
 }
 
-void imprimir_sol(vector< vector< tuple<int, int> > > solInicial){
-	for(int i = 0; i < solInicial.size(); ++i){
-		cout << i+1 << ": ";
-		for(int j = 0; j < solInicial[i].size(); ++j){
-			cout << "(" << get<0>(solInicial[i][j])+1 << "," << get<1>(solInicial[i][j])+1 << "), ";  
-		}
-		cout << endl;
-	}
-}
-
 
 int main (int argc, char *argv[]){
 
@@ -395,18 +445,26 @@ int main (int argc, char *argv[]){
     cout << endl;
   }
 
-  //visita_encuentro();
-
+  cout << endl;
+  //vector< vector< tuple<int, int> > > instaciaDePrueba = {{tuple<int, int>(1,2), tuple<int, int>(2,0)}, {tuple<int, int>(2,1), tuple<int, int>(0,1)}, {tuple<int, int>(1,1)}};
   vector< vector< tuple<int, int> > > instaciaDePrueba = {{tuple<int, int>(0,0), tuple<int, int>(2,1)}, {tuple<int, int>(1,0), tuple<int, int>(2,1)}, {tuple<int, int>(1,2), tuple<int, int>(1,1), tuple<int, int>(2,1)}};
+  vector< vector< tuple<int, int> > > candidato;
   cout << "Es factible:" << endl;
-  //cout << es_factible(instaciaDePrueba) << endl;
-  cout << "Tiempo Total:" << endl;
-  //cout << funcion_evaluacion(instaciaDePrueba) << endl;
-  
-  //cout << es_factible(solucion_inicial_greedy()) << endl;
+  candidato = solucion_inicial();
+  cout << es_factible(candidato) << endl;
+  cout << "Imprimiendo: " << endl;
+  cout << endl;
+  imprimir_sol(candidato);
+
+  cout << "Pruebas: " << endl;
   cout << endl;
 
-  imprimir_sol(solucion_inicial_greedy());
+  for(int i = 0; i < 10; ++i){
+  	candidato = solucion_inicial();
+  	cout << "factible: "<< es_factible(candidato) << endl;
+  	imprimir_sol(candidato);
+  	cout << endl;
+  }
 
 }
 
