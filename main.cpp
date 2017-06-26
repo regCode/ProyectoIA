@@ -262,6 +262,43 @@ int funcion_evaluacion(vector< vector< tuple<int, int> > > solucion){
 	return max;
 }
 
+tuple<int, int> funcion_evaluacionV2(vector< vector< tuple<int, int> > > solucion){
+	
+	int tiempo [B] = {};
+	int max = INT_MIN;
+	vector<int> busesRestantes = busesEstacion; 
+
+	for(int i = 0; i < solucion.size(); ++i){ //Bus i
+		for(int j = 0; j < solucion[i].size(); ++j){ //Arco (p, s)
+			if(j == 0){ //Sale de la estacion
+				for(int w = 0; w < E; ++w){ //Buscamos la primera estacion disponible
+					if(busesRestantes[w] > 0){
+						tiempo[i] += distEstacionPtoEncuentro[w][get<0>(solucion[i][j])]; //Tiempo desde 
+						busesRestantes[w]--;
+						break;
+					}
+				}
+				tiempo[i] += distPtoEncuentroRefugio[get<0>(solucion[i][j])][get<1>(solucion[i][j])];
+			}
+			else{
+				tiempo[i] += distPtoEncuentroRefugio[get<0>(solucion[i][j])][get<1>(solucion[i][j-1])];
+				tiempo[i] += distPtoEncuentroRefugio[get<0>(solucion[i][j])][get<1>(solucion[i][j])];
+			}
+		}
+	}
+
+	int bus;
+
+	for(int i = 0; i < B; ++i){
+		if(tiempo[i] > max){
+			max = tiempo[i];
+			bus = i;
+		}
+	}
+
+	return make_tuple(max, bus);
+}
+
 vector<int> visita_necesaria(void){
   vector<int> visita_necesaria(P);
   for(int i = 0; i < P; ++i){
@@ -338,7 +375,11 @@ vector< vector< tuple<int, int> > > solucion_inicial(void){
 
 }
 
+vector< vector< tuple<int, int> > >  movimiento(vector< vector< tuple<int, int> > > candidatoSolucion){
 
+}
+
+/*
 vector< vector< tuple<int, int> > > solucion_inicial_greedy(void){
 
 	vector< vector< tuple<int, int> > > solInicial;
@@ -416,7 +457,7 @@ vector< vector< tuple<int, int> > > solucion_inicial_greedy(void){
 	
 	return solInicial;
 }
-
+*/
 
 int main (int argc, char *argv[]){
 
@@ -465,7 +506,12 @@ int main (int argc, char *argv[]){
   cout << endl;
   //vector< vector< tuple<int, int> > > instaciaDePrueba = {{tuple<int, int>(1,2), tuple<int, int>(2,0)}, {tuple<int, int>(2,1), tuple<int, int>(0,1)}, {tuple<int, int>(1,1)}};
   vector< vector< tuple<int, int> > > instaciaDePrueba = {{tuple<int, int>(0,0), tuple<int, int>(2,1)}, {tuple<int, int>(1,0), tuple<int, int>(2,1)}, {tuple<int, int>(1,2), tuple<int, int>(1,1), tuple<int, int>(2,1)}};
+  cout << "prueba de evaluacion 2.0;" << endl;
+  cout << get<0>(funcion_evaluacionV2(instaciaDePrueba)) << " " << get<1>(funcion_evaluacionV2(instaciaDePrueba))+1 << endl; 
+  imprimir_sol(instaciaDePrueba);
   vector< vector< tuple<int, int> > > candidato;
+  cout << endl;
+  cout << endl;
   cout << "Es factible:" << endl;
   candidato = solucion_inicial();
   cout << es_factible(candidato) << endl;
@@ -476,7 +522,7 @@ int main (int argc, char *argv[]){
   cout << "Pruebas: " << endl;
   cout << endl;
 
-  for(int i = 0; i < 10; ++i){
+  for(int i = 0; i < 3; ++i){
   	candidato = solucion_inicial();
   	cout << "factible: "<< es_factible(candidato) << endl;
   	imprimir_sol(candidato);
