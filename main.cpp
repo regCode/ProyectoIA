@@ -27,10 +27,8 @@ tuple<int, int, int> lastSWAP (-1, 0, 1); //(bus, elemento1, elemento2)
 
 // Funcion Trim ////////////////////////////////////////////////////////////////////////////////
 // Descripcion: elimina los espacios en blanco al inicio y al final de un string
-// fuente: JOSE
+// fuente: https://gist.github.com/dedeexe/9080526
 // fecha: 24/06/2017
-
-//! IMPORTANTE CAMBIAR FUENTE
 
 string trim_left(const string& str)
 {
@@ -50,23 +48,6 @@ string trim(const string& str)
   return trim_left(trim_right(str));
 }
 
-/*
-// version antigua
-// fuente: https://stackoverflow.com/questions/25829143/c-trim-whitespace-from-a-string
-string trim(const string& str){
-    
-    size_t first = str.find_first_not_of(' '); // size_t is an unsigned integer type of at least 16 bit 
-    
-    if (string::npos == first){
-        return str;
-    }
-    
-    size_t last = str.find_last_not_of(' ');
-    
-    return str.substr(first, (last - first + 1));
-}
-*/
-
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Funcion Split ////////////////////////////////////////////////////////////////////////////////
@@ -74,6 +55,7 @@ string trim(const string& str){
 // fuente: http://code.runnable.com/VHb0hWMZp-ws1gAr/splitting-a-string-into-a-vector-for-c%2B%2B
 // fecha: 23/06/2017
 // Modificiado al integrar Trim
+
 vector<string> split(string str, char delimiter) {
 
   str = trim(str);
@@ -413,100 +395,8 @@ vector< vector< tuple<int, int> > >  movimiento(vector< vector< tuple<int, int> 
 	}
 
 	return vecino;	
-	/*
-	if(get<1>(busMasLento) == get<0>(lastSWAP)){
-		if(get<1>(lastSWAP)] != candidatoSolucion.size() && get<2>(lastSWAP)] <= candidatoSolucion.size()){
-			swap(vecino[get<1>(lastSWAP)], vecino[get<2>(lastSWAP)]);
-			if(get<2>(lastSWAP) == candidatoSolucion.size()){
-				get<1>(lastSWAP)++;
-				get<1>(lastSWAP);
-			}
-		}
-		
-	}
-	*/
 
 }
-
-/*
-vector< vector< tuple<int, int> > > solucion_inicial_greedy(void){
-
-	vector< vector< tuple<int, int> > > solInicial;
-	vector<tuple<int, int> >  recorridoBus;
-	
-	vector<int> personasPorSalvar = personasPE;
-	vector<int> capacidadRestante = capacidadS;
-
-	int min;
-	int genteBus;
-	int puntoEncuento;
-	int refugio; 
-
-	vector<int> finEvacuacion (B, 0);
-
-	while(personasPorSalvar != finEvacuacion){
-		for(int i = 0; i < distPtoEncuentroRefugio.size(); ++i){
-
-			if(personasPorSalvar[i] == 0){//No hay nadie por salvar por lo que se va a otro punto de encuentro
-				continue; //Pasamos al siguiente punto de encuentro
-			}
-
-			min = INT_MAX;
-
-			for(int j = 0; j < distPtoEncuentroRefugio[i].size(); ++j){
-				if(distPtoEncuentroRefugio[i][j] < min && capacidadRestante[j] > 0){
-					min = distPtoEncuentroRefugio[i][j];
-					refugio = j;
-				}
-			}
-
-			if(capacidadRestante[refugio] <= 0){
-				continue;
-			}
-			
-			if(personasPorSalvar[i] <= capacidadRestante[refugio]){
-				if(personasPorSalvar[i] < Q){
-					genteBus = personasPorSalvar[i];
-				}
-				else{
-					genteBus = Q;
-				}
-			}
-			else{
-				if(capacidadRestante[refugio] > Q){
-					genteBus = Q;
-				}
-				else{
-					genteBus = capacidadRestante[refugio];
-				}
-			}
-
-			
-			personasPorSalvar[i]-= genteBus;
-			capacidadRestante[refugio]-= genteBus;
-
-			//cout << "punto de encuentro escogido: " << i << " gente por rescatar al salir: " << personasPorSalvar[i] << endl;
-			//cout << "refugio escogido: " << refugio << " capacidad a la llegada: " << capacidadRestante[refugio] << endl;
-			cout << endl;
-
-			recorridoBus.push_back(tuple<int, int>(i, refugio));
-			
-		}
-	}
-
-	solInicial.push_back(recorridoBus);
-
-	for(int i = 0; i < solInicial.size(); ++i){
-		for(int j = 0; j < solInicial[i].size(); ++j){
-			cout << "(" << get<0>(solInicial[i][j])+1 << "," << get<1>(solInicial[i][j])+1 << "), ";  
-		}
-	}
-
-	cout << endl;
-	
-	return solInicial;
-}
-*/
 
 int main (int argc, char *argv[]){
 
@@ -542,21 +432,23 @@ int main (int argc, char *argv[]){
   	}
 
   	if(verboso){
-  		cout << "Los parametros son:" << endl;
-		cout << "B = " << B << " : Q = " << Q << endl;
-		cout << "E = " << E << " : ";
+  		cout << endl;
+  		cout << "Parametros de la instacia:" << endl;
+  		cout << endl;
+		cout << B << " : " << Q << endl;
+		cout << E << " : ";
 
 		for(int i=0; i<busesEstacion.size(); ++i)
 		cout << busesEstacion[i] << "  ";
 		cout << endl;
 
-		cout << "P = " << P << " : PersonasTotalPE = " << personasTotalPE << " : ";
+		cout << P << " : " << personasTotalPE << " : ";
 
 		for(int i=0; i<personasPE.size(); ++i)
 		cout << personasPE[i] << "  ";
 		cout << endl;
 
-		cout << "S = " << S << " : capacidadTotalS = " << capacidadTotalS << " : ";
+		cout <<  S << " : " << capacidadTotalS << " : ";
 
 		for(int i=0; i<capacidadS.size(); ++i)
 		cout << capacidadS[i] << "  ";
@@ -582,381 +474,185 @@ int main (int argc, char *argv[]){
 			cout << endl;
 		}
 
+		cout << endl;
+		cout << endl;
+
+		cout << "HILL CLIMBING:"<< endl;
+		cout << "------------------------------------"<< endl;
+
+		cout << "Numero de restart: " << restart << endl;
+		cout << "------------------------------------"<< endl;
+
+		vector< vector< tuple<int, int> > > mejorSolucion;
+		vector< vector< tuple<int, int> > > vecino;
+		vector< vector< tuple<int, int> > > mejorSolucionFinal;
+
+		int tiempoMejorSolucionFinal = INT_MAX;
+		tuple<int, int> tiempoMejorSolucion;
+		tuple<int, int> tiempoVecino; 
+
+		for(int i = 0; i < restart; ++i){
+			
+			lastSWAP  = make_tuple(-1, 0, 1);
+			mejorSolucion = solucion_inicial();
+			int contador = 0;
+
+			while(true){ 
+				cout << endl;
+				cout << "Iteracion: " << contador << endl;
+				cout << endl;
+				cout << "Mejor Solucion:" << endl;
+				cout << endl;
+				tiempoMejorSolucion = funcion_evaluacionV2(mejorSolucion);
+				imprimir_sol(mejorSolucion);
+				//cout << "factible: "<< es_factible(mejorSolucion) << endl;
+				cout << "Bus mas lento: " << get<1>(tiempoMejorSolucion) + 1 << " tiempo: "<< get<0>(tiempoMejorSolucion) << endl;
+				cout << endl;
+				cout << endl;
+				cout << "Vecinos"<< endl;
+				cout << "------------------------------------"<< endl;
+				lastSWAP  = make_tuple(-1, 0, 1);
+
+				do{
+					cout << endl;
+					//cout << "original: (ordinal->" << get<0>(lastSWAP) + 1 << ", " << get<1>(lastSWAP) << ", " << get<2>(lastSWAP) << ")" << endl; 
+					vecino = movimiento(mejorSolucion);
+					//cout << "nuevo: (ordinal->" << get<0>(lastSWAP)+ 1 << ", " << get<1>(lastSWAP) << ", " << get<2>(lastSWAP) << ")" << endl; 
+					cout << "Movimiento: (" << get<0>(lastSWAP)+ 1 << ", " << get<1>(lastSWAP) << ", " << get<2>(lastSWAP) << ")" << endl;
+					cout << endl;
+					tiempoVecino = funcion_evaluacionV2(vecino);
+					imprimir_sol(vecino);
+					//cout << "factible: "<< es_factible(vecino) << endl;
+					cout << "Bus mas lento: " << get<1>(tiempoVecino) + 1 << " tiempo: "<< get<0>(tiempoVecino) << endl;
+					cout << "¿Es mejor?: ";
+					if(get<0>(tiempoMejorSolucion) < get<0>(tiempoVecino))
+						cout << "NO" << endl;
+					
+					else if(get<0>(tiempoMejorSolucion) > get<0>(tiempoVecino)){
+						cout << "SI" << endl;
+						cout << endl;
+						cout << "_____________________________________" << endl; 
+					}
+					
+					else
+						cout << "NO" << endl; //No acepta soluciones iguales
+
+					cout << endl;
+
+				}while(get<0>(tiempoMejorSolucion) <= get<0>(tiempoVecino) && get<1>(lastSWAP) != get<2>(lastSWAP));
+
+
+				/*cout << endl;
+				cout << "sali con: " << endl;
+				cout << "tiempo mejor solucion: " << get<0>(tiempoMejorSolucion) << endl;
+				cout << "tiempo vecino " << get<0>(tiempoVecino) << endl;
+				cout << "last swap 1 " << get<1>(lastSWAP) << endl;
+				cout << "last swap 2 " << get<2>(lastSWAP) << endl;
+				cout << endl;
+				cout << endl;
+				*/
+
+				if(get<1>(lastSWAP) == get<2>(lastSWAP)) //No quedan vecinos por visitar
+					break;
+				
+				mejorSolucion = vecino;
+				contador++;
+			
+			}
+
+			cout << endl;
+			cout << "------------------------------------"<< endl;
+			cout << "Nueva mejor solucion encontrada en la " << contador << " iteracion " << endl;
+			cout << endl;
+			imprimir_sol(mejorSolucion);
+			//cout << "factible: "<< es_factible(mejorSolucion) << endl;
+			cout << "Bus mas lento: " << get<1>(tiempoMejorSolucion) + 1 << " tiempo: "<< get<0>(tiempoMejorSolucion) << endl;
+			cout << endl;
+
+			tiempoMejorSolucion = funcion_evaluacionV2(mejorSolucion); 
+
+			if(get<0>(tiempoMejorSolucion) <= tiempoMejorSolucionFinal){
+  				mejorSolucionFinal = mejorSolucion;
+  				tiempoMejorSolucionFinal = get<0>(tiempoMejorSolucion);
+  			}
+
+  		} 
+
+		cout << endl;
+		cout << endl;
+		cout << "------------------------------------"<< endl;
+		cout << "Mejor solucion encontrada luego de "<< restart << " restart"<< endl;
+		imprimir_sol(mejorSolucionFinal);
+		tiempoMejorSolucion = funcion_evaluacionV2(mejorSolucionFinal);
+		//cout << "factible: "<< es_factible(mejorSolucionFinal) << endl;
+		cout << "Bus mas lento: " << get<1>(tiempoMejorSolucion) + 1 << " tiempo: "<< get<0>(tiempoMejorSolucion) << endl;
+		cout << endl;
+
+		return 0;
 		
   	}
+  	else{
 
+  		vector< vector< tuple<int, int> > > mejorSolucion;
+		vector< vector< tuple<int, int> > > vecino;
+		vector< vector< tuple<int, int> > > mejorSolucionFinal;
 
-		cout << "Los parametros son:" << endl;
-		cout << "B = " << B << " : Q = " << Q << endl;
-		cout << "E = " << E << " : ";
+		int tiempoMejorSolucionFinal = INT_MAX;
+		tuple<int, int> tiempoMejorSolucion;
+		tuple<int, int> tiempoVecino; 
 
-		for(int i=0; i<busesEstacion.size(); ++i)
-		cout << busesEstacion[i] << "  ";
-		cout << endl;
+		for(int i = 0; i < restart; ++i){
+		
+			lastSWAP  = make_tuple(-1, 0, 1);
+			mejorSolucion = solucion_inicial();
+			int contador = 0;
 
-		cout << "P = " << P << " : PersonasTotalPE = " << personasTotalPE << " : ";
+			while(true){ 
+				
+				tiempoMejorSolucion = funcion_evaluacionV2(mejorSolucion);
+				lastSWAP  = make_tuple(-1, 0, 1);
 
-		for(int i=0; i<personasPE.size(); ++i)
-		cout << personasPE[i] << "  ";
-		cout << endl;
+				do{
+					vecino = movimiento(mejorSolucion);
+					tiempoVecino = funcion_evaluacionV2(vecino);
+					
 
-		cout << "S = " << S << " : capacidadTotalS = " << capacidadTotalS << " : ";
+				}while(get<0>(tiempoMejorSolucion) <= get<0>(tiempoVecino) && get<1>(lastSWAP) != get<2>(lastSWAP));
 
-		for(int i=0; i<capacidadS.size(); ++i)
-		cout << capacidadS[i] << "  ";
-
-		cout << endl;
-		cout << endl;
-
-		for(int i=0; i<distEstacionPtoEncuentro.size(); ++i){
-		cout << i+1 << " : ";
-		for(int j=0; j<distEstacionPtoEncuentro[i].size(); ++j){
-		  cout << distEstacionPtoEncuentro[i][j] << "  ";
-		}
-		cout << endl;
-		}
-
-		cout << endl;
-
-		for(int i=0; i<distPtoEncuentroRefugio.size(); ++i){
-			cout << i+1 << " : ";
-			for(int j=0; j<distPtoEncuentroRefugio[i].size(); ++j){
-			  cout << distPtoEncuentroRefugio[i][j] << "  ";
+				if(get<1>(lastSWAP) == get<2>(lastSWAP)) //No quedan vecinos por visitar
+					break;
+				
+				mejorSolucion = vecino;
+				contador++;
+			
 			}
-		cout << endl;
-		}
+			
+			tiempoMejorSolucion = funcion_evaluacionV2(mejorSolucion); 
 
-
-  cout << endl;
-  cout << endl;
-
-  /*
-  vector< vector< tuple<int, int> > > candidato;
-  tuple<int, int> maslargo; 
-
-  for(int i = 0; i < 8; ++i){
-  	candidato = solucion_inicial();
-  	cout << "factible: "<< es_factible(candidato) << endl;
-  	imprimir_sol(candidato);
-  	maslargo = funcion_evaluacionV2(candidato);
-  	cout << "Bus mas lento: " << get<1>(maslargo)+1 << " tiempo: "<< get<0>(maslargo) << endl;
-  	cout << endl;
-  	cout << endl;
-  }
-
-  */
-
-
- 
-  /*
-  tuple<int, int> maslargo; 
-  vector< vector< tuple<int, int> > > vecino = solucion_inicial();
-
-  cout << "Movimientos: " << endl;
-  for(int i = 0; i < 5; i++){
-  	cout << i << ":  " << endl;
-  	imprimir_sol(vecino);
-  	cout << "factible: "<< es_factible(vecino) << endl;
-  	maslargo = funcion_evaluacionV2(vecino);
-  	cout << "Bus mas lento: " << get<1>(maslargo)+1 << " tiempo: "<< get<0>(maslargo) << endl;
-  	cout << endl;
-  	if(get<1>(lastSWAP) != get<2>(lastSWAP))
-  		vecino = movimiento(vecino);
-  	else
-  		cout << "No se pueden realizar mas sawp: " << get<1>(lastSWAP) << "  " << get<2>(lastSWAP)<< " | " << endl;
-  }
-  */
-
-  cout << "HILL CLIMBING:"<< endl;
-  cout << "------------------------------------"<< endl;
-
-  cout << "Se utilizaran: " << restart << endl;
-  cout << "------------------------------------"<< endl;
-
-  vector< vector< tuple<int, int> > > mejorSolucion;
-  vector< vector< tuple<int, int> > > vecino;
-  vector< vector< tuple<int, int> > > mejorSolucionFinal;
- 
-  int tiempoMejorSolucionFinal = INT_MAX;
-  tuple<int, int> tiempoMejorSolucion;
-  tuple<int, int> tiempoVecino; 
-
-
-  for(int i = 0; i < restart; ++i){
-  	
-  	lastSWAP  = make_tuple(-1, 0, 1);
-  	mejorSolucion = solucion_inicial();
-  	int contador = 0;
-	
-	while(true){ 
-		cout << endl;
-		cout << "Solucion Actual:"<< endl;
-		cout << contador << "." <<endl;
-		tiempoMejorSolucion = funcion_evaluacionV2(mejorSolucion);
-  		imprimir_sol(mejorSolucion);
-  		cout << "factible: "<< es_factible(mejorSolucion) << endl;
-  		cout << "Bus mas lento: " << get<1>(tiempoMejorSolucion) + 1 << " tiempo: "<< get<0>(tiempoMejorSolucion) << endl;
-  		cout << endl;
-  		cout << endl;
-  		cout << "Vecinos"<< endl;
-  		cout << "------------------------------------"<< endl;
-  		lastSWAP  = make_tuple(-1, 0, 1);
-  		do{
-  			cout << endl;
-  			cout << "original: (ordinal->" << get<0>(lastSWAP) + 1 << ", " << get<1>(lastSWAP) << ", " << get<2>(lastSWAP) << ")" << endl; 
-  			vecino = movimiento(mejorSolucion);
-  			cout << "nuevo: (ordinal->" << get<0>(lastSWAP)+ 1 << ", " << get<1>(lastSWAP) << ", " << get<2>(lastSWAP) << ")" << endl; 
-  			cout << endl;
-  			tiempoVecino = funcion_evaluacionV2(vecino);
-  			imprimir_sol(vecino);
-  			cout << "factible: "<< es_factible(vecino) << endl;
-  			cout << "Bus mas lento: " << get<1>(tiempoVecino) + 1 << " tiempo: "<< get<0>(tiempoVecino) << endl;
-  			cout << "¿Es mejor?: ";
-  			if(get<0>(tiempoMejorSolucion) < get<0>(tiempoVecino)){
-  				cout << "NO" << endl;
+			if(get<0>(tiempoMejorSolucion) <= tiempoMejorSolucionFinal){
+  				mejorSolucionFinal = mejorSolucion;
+  				tiempoMejorSolucionFinal = get<0>(tiempoMejorSolucion);
   			}
 
-  			else if(get<0>(tiempoMejorSolucion) > get<0>(tiempoVecino)){
-  				cout << "SI" << endl;
-  			}
-  			else
-  				cout << "IGUAL y se rechaza" << endl;
+  		} 
 
-  			cout << endl;
+		/*
+		cout << endl;
+		cout << endl;
+		cout << "------------------------------------"<< endl;
+		cout << "Mejor solucion FINAL es, encontrada en la " << endl;
+		imprimir_sol(mejorSolucionFinal);
+		tiempoMejorSolucion = funcion_evaluacionV2(mejorSolucionFinal);
+		cout << "factible: "<< es_factible(mejorSolucionFinal) << endl;
+		cout << "Bus mas lento: " << get<1>(tiempoMejorSolucion) + 1 << " tiempo: "<< get<0>(tiempoMejorSolucion) << endl;
+		cout << endl;
+		*/
+		
+		return 0;
 
-  		}while(get<0>(tiempoMejorSolucion) <= get<0>(tiempoVecino) && get<1>(lastSWAP) != get<2>(lastSWAP));
-
-  		cout << endl;
-  		cout << "sali con: " << endl;
-  		cout << "tiempo mejor solucion: " << get<0>(tiempoMejorSolucion) << endl;
-  		cout << "tiempo vecino " << get<0>(tiempoVecino) << endl;
-  		cout << "last swap 1 " << get<1>(lastSWAP) << endl;
-  		cout << "last swap 2 " << get<2>(lastSWAP) << endl;
-  		cout << endl;
-  		cout << endl;
-
-  		
-  		if(get<1>(lastSWAP) == get<2>(lastSWAP)){ //No quedan vecinos por visitar
-  			break;
-  		}
-
-  		mejorSolucion = vecino;
-  		contador++;
-
-
-
-	} 
-
-  	cout << endl;
-  	cout << endl;
-	cout << "------------------------------------"<< endl;
-  	cout << "Mejor solucion en este ciclo, encontrada en la " << contador << " iteracion " << endl;
-  	imprimir_sol(mejorSolucion);
-  	cout << "factible: "<< es_factible(mejorSolucion) << endl;
-  	cout << "Bus mas lento: " << get<1>(tiempoMejorSolucion) + 1 << " tiempo: "<< get<0>(tiempoMejorSolucion) << endl;
-  	cout << endl;
-
-  	tiempoMejorSolucion = funcion_evaluacionV2(mejorSolucion);
-
-  	if(get<0>(tiempoMejorSolucion) <= tiempoMejorSolucionFinal){
-  		mejorSolucionFinal = mejorSolucion;
-  		tiempoMejorSolucionFinal = get<0>(tiempoMejorSolucion);
   	}
 
-  } 
 
-  cout << endl;
-  cout << endl;
-  cout << "------------------------------------"<< endl;
-  cout << "Mejor solucion FINAL es, encontrada en la " << endl;
-  imprimir_sol(mejorSolucionFinal);
-  tiempoMejorSolucion = funcion_evaluacionV2(mejorSolucionFinal);
-  cout << "factible: "<< es_factible(mejorSolucionFinal) << endl;
-  cout << "Bus mas lento: " << get<1>(tiempoMejorSolucion) + 1 << " tiempo: "<< get<0>(tiempoMejorSolucion) << endl;
-  cout << endl;
+
 
 }
-
-/*
-#################################################
-a
-// basic file operations
-#include <iostream>
-
-using namespace std;
-
-int main () {
-  ofstream myfile;
-  myfile.open ("example.txt");
-  myfile << "Writing this to a file.\n";
-  myfile.close();
-  return 0;
-}
-
-// reading a text file
-#include <iostream>
-#include <fstream>
-#include <string>
-using namespace std;
-
-int main () {
-  string line;
-  ifstream myfile ("example.txt");
-  if (myfile.is_open())
-  {
-    while ( getline (myfile,line) )
-    {
-      cout << line << '\n';
-    }
-    myfile.close();
-  }
-
-  else cout << "Unable to open file"; 
-
-  return 0;
-}
-
-#include <stdlib.h> 
-
-int leer_entradas(int argc, char **argv){
-  //archivo con la instancia del problema
-  archivo_configuracion=(char *)(argv[1]);
-  
-  //archivo donde escribir los resultados de la ejecucion
-  archivo_resultados=(char *)(argv[2]);
-  
-  //SEMILLA
-  semilla=atoi(argv[3]);
-
-  //BUDGET
-  Mr=atoi(argv[4]);
-  if(debug)
-    printf("Mr: %d\n", Mr);
-
-  debug=atoi(argv[5]);
-
-  return 1;
-}
-
-void leer_archivo_configuracion(void){
-
-  char instancia[1000];
-  //lectura de archivo de configuracion
-  FILE *configuracion;
-  char buf[100];
-  int i,j;
-
-  configuracion=fopen(archivo_configuracion, "r");
-  int rt=fscanf(configuracion,"%s",buf);
-  while(strcmp("NODE_COORD_SECTION",buf)!=0){
-      if(strcmp("EDGE_WEIGHT_TYPE",buf)==0){
-  rt=fscanf(configuracion,"%s",buf); //los dos puntos que estan separados
-        rt=fscanf(configuracion,"%s",buf);
-  if(strcmp("GEO",buf)==0) 
-          tipodistancia=GEO;
-  else if(strcmp("EUC_2D",buf)==0) 
-    tipodistancia=EUC;
-  buf[0]=0;
-      }
-      else if(strcmp("EDGE_WEIGHT_TYPE:",buf)==0){
-  int rt=fscanf(configuracion,"%s",buf);
-  if (strcmp("GEO",buf)==0) 
-    tipodistancia=GEO;
-  else if(strcmp("EUC_2D",buf)==0) 
-    tipodistancia=EUC;
-  buf[0]=0;
-      }
-      else if(strcmp("DIMENSION",buf)==0){
-        rt=fscanf(configuracion,"%s",buf);//los dos puntos que estan separados
-  rt=fscanf(configuracion,"%d",&Tinstancia);
-  buf[0]=0;
-      }
-      else if(strcmp("DIMENSION:",buf)==0) {
-  rt=fscanf(configuracion, "%d", &Tinstancia);
-  buf[0]=0;
-      }
-      else if(strcmp("NAME",buf)==0)
-        buf[0]=0;
-      else if(strcmp("NAME:",buf)==0) 
-  buf[0]=0;
-      rt=fscanf(configuracion,"%s", buf);
-    }
-
-  if(strcmp("NODE_COORD_SECTION",buf)==0){
-    if(Tinstancia==0){
-      cout<<"ERROR: Problemas en la lectura del tamano de la instancia"<<endl;
-      salir();
-    }
-
-    //Reserva de espacio para el arreglo de coordenadas y la matriz de distancia
-    coordenadas=new coordenada[Tinstancia];
-    distancia=new int*[Tinstancia];
-    for( int i = 0 ; i < Tinstancia ; i++ )
-      distancia[i] = new int [Tinstancia];
-    //Lectura de las coordenadas de cada punto
-    int id;
-    float x,y;
-    int contador=0;
-    while(contador<Tinstancia){
-      int rt=fscanf(configuracion,"%d %f %f\n",&id,&x,&y);
-      coordenadas[id-1].x=x;
-      coordenadas[id-1].y=y;
-      contador++;
-    }
-  }
-
-
-int main (int argc, char *argv[]){
-  
-  //lectura de parametros
-  if(!leer_entradas(argc,argv)){
-    cout<<"Problemas en la lectura de los parametros";
-    exit(1);
-  }
-
-  //lectura de instancia
-  restart=-1;
-  iteracion=-1;
-  leer_archivo_configuracion();
-  solucion solucion_actual, candidata_solucion, mejor_candidata;
-
-  //semilla aleatoria
-  srand48 (semilla);
-  bool optimo_local;
-  
-  crear_solucion_aleatoria(&solucion_actual);
-  mejor_solucion=solucion_actual;
-  if(debug) cout<<"Restart | Iteracion | Solucion-Actual \t\t\t\t |Vecindario \t\t\t\t\t  |Mejor-solucion"<<endl;   
-  if(debug) cout<<"-------------------------------------------------------------------------------------";
-  if(debug) cout<<"-------------------------------------------------------------------------------------"<<endl;
-  for(restart=0;restart<Mr;restart++){
-    optimo_local=false;
-    iteracion=0;
-    do{
-      if(debug) cout<<"   "<<restart+1 <<" \t     "<<iteracion+1<<"\t\t"<<solucion_actual<<endl;
-      //time_t ini_it=time(NULL);
-      mejor_candidata=solucion_actual;
-      for(int current=0;current<Tinstancia;current++){
-          if(debug) cout<<"\t\t\t\t  \t\t\t";
-          SWaP(&solucion_actual, &candidata_solucion, current, current+1);
-          if(debug) cout<<"\t"<< candidata_solucion<<endl;
-          if(candidata_solucion.aptitud < mejor_candidata.aptitud)
-            mejor_candidata=candidata_solucion;
-      }
-      iteracion++;
-      if(debug) getchar();
-      if(mejor_candidata.aptitud<solucion_actual.aptitud) //Minimizacion
-          solucion_actual=mejor_candidata;
-      else
-          optimo_local=true;
-    }while(!optimo_local);
-    if(solucion_actual.aptitud < mejor_solucion.aptitud)
-        mejor_solucion = solucion_actual;
-    if(debug) cout<<"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t"<<mejor_solucion<<endl;
-    crear_solucion_aleatoria(&solucion_actual);
-    if(debug) getchar();
-  }
-  if(debug) cout<<"-------------------------------------------------------------------------------------"<<endl;
-  salir();
-}
-*/
