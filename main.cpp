@@ -7,6 +7,7 @@
 #include <math.h>
 #include <tuple>
 #include <climits>
+#include <time.h>
 
 using namespace std;
 
@@ -22,7 +23,7 @@ vector<int> capacidadS;
 vector< vector<int> > distEstacionPtoEncuentro;
 vector< vector<int> > distPtoEncuentroRefugio;
 
-tuple<int, int, int> lastSWAP (-1, -1, -1); //(bus, elemento1, elemento2)
+tuple<int, int, int> lastSWAP (-1, 0, 1); //(bus, elemento1, elemento2)
 
 // Funcion Trim ////////////////////////////////////////////////////////////////////////////////
 // Descripcion: elimina los espacios en blanco al inicio y al final de un string
@@ -509,6 +510,8 @@ vector< vector< tuple<int, int> > > solucion_inicial_greedy(void){
 
 int main (int argc, char *argv[]){
 
+  srand (time(NULL));
+
   lectura_instacia(argv[1]);
 
   cout << "Los parametros son:" << endl;
@@ -582,10 +585,11 @@ int main (int argc, char *argv[]){
   cout << endl;
   cout << endl;
 
+  /*
   vector< vector< tuple<int, int> > > candidato;
   tuple<int, int> maslargo; 
 
-  for(int i = 0; i < 4; ++i){
+  for(int i = 0; i < 8; ++i){
   	candidato = solucion_inicial();
   	cout << "factible: "<< es_factible(candidato) << endl;
   	imprimir_sol(candidato);
@@ -595,7 +599,10 @@ int main (int argc, char *argv[]){
   	cout << endl;
   }
 
+  */
 
+
+ 
   /*
   tuple<int, int> maslargo; 
   vector< vector< tuple<int, int> > > vecino = solucion_inicial();
@@ -608,11 +615,107 @@ int main (int argc, char *argv[]){
   	maslargo = funcion_evaluacionV2(vecino);
   	cout << "Bus mas lento: " << get<1>(maslargo)+1 << " tiempo: "<< get<0>(maslargo) << endl;
   	cout << endl;
-  	vecino = movimiento(vecino);
+  	if(get<1>(lastSWAP) != get<2>(lastSWAP))
+  		vecino = movimiento(vecino);
+  	else
+  		cout << "No se pueden realizar mas sawp: " << get<1>(lastSWAP) << "  " << get<2>(lastSWAP)<< " | " << endl;
   }
   */
 
+  cout << "HILL CLIMBING:"<< endl;
+  cout << "------------------------------------"<< endl;
+
+  int restart = 1;
+
+  cout << "Se utilizaran: " << restart << endl;
+  cout << "------------------------------------"<< endl;
+
+  vector< vector< tuple<int, int> > > mejorSolucion;
+  vector< vector< tuple<int, int> > > vecino;
+  vector< vector< tuple<int, int> > > mejorSolucionFinal;
  
+  int rendimientoMejorSolucionFinal = INT_MIN;
+  tuple<int, int> rendimientoMejorSolucion;
+  tuple<int, int> rendimientoVecino; 
+
+
+  for(int i = 0; i < restart; ++i){
+  	
+  	lastSWAP  = make_tuple(-1, 0, 1);
+  	mejorSolucion = solucion_inicial();
+  	int contador = 0;
+	
+	while(true){ 
+		cout << endl;
+		cout << "Solucion Actual:"<< endl;
+		cout << contador << "." <<endl;
+		rendimientoMejorSolucion = funcion_evaluacionV2(mejorSolucion);
+  		imprimir_sol(mejorSolucion);
+  		cout << "factible: "<< es_factible(mejorSolucion) << endl;
+  		cout << "Bus mas lento: " << get<1>(rendimientoMejorSolucion) + 1 << " tiempo: "<< get<0>(rendimientoMejorSolucion) << endl;
+  		cout << endl;
+  		cout << endl;
+  		cout << "Vecinos"<< endl;
+  		cout << "------------------------------------"<< endl;
+  		do{
+  			vecino = movimiento(mejorSolucion);
+  			rendimientoVecino = funcion_evaluacionV2(vecino);
+  			imprimir_sol(vecino);
+  			cout << "factible: "<< es_factible(vecino) << endl;
+  			cout << "Bus mas lento: " << get<1>(rendimientoVecino) + 1 << " tiempo: "<< get<0>(rendimientoVecino) << endl;
+  			cout << "¿Es mejor?: ";
+  			if(get<0>(rendimientoMejorSolucion) > get<0>(rendimientoVecino)){
+  				cout << "NO" << endl;
+  			}
+
+  			else if(get<0>(rendimientoMejorSolucion) < get<0>(rendimientoVecino)){
+  				cout << "SI" << endl;
+  			}
+  			else
+  				cout << "IGUAL pero se acepta" << endl;
+
+  			cout << endl;
+
+  		}while(get<0>(rendimientoMejorSolucion) > get<0>(rendimientoVecino) && get<1>(lastSWAP) != get<2>(lastSWAP));
+  		
+  		if(get<1>(lastSWAP) == get<2>(lastSWAP)){ //No quedan vecinos por visitar
+  			break;
+  		}
+
+  		mejorSolucion = vecino;
+  		contador++;
+
+
+
+	} 
+
+  	cout << endl;
+  	cout << endl;
+	cout << "------------------------------------"<< endl;
+  	cout << "Mejor solucion en este ciclo, encontrada en la " << contador << " iteracion " << endl;
+  	imprimir_sol(mejorSolucion);
+  	cout << "factible: "<< es_factible(mejorSolucion) << endl;
+  	cout << "Bus mas lento: " << get<1>(rendimientoMejorSolucion) + 1 << " tiempo: "<< get<0>(rendimientoMejorSolucion) << endl;
+  	cout << endl;
+
+  	rendimientoMejorSolucion = funcion_evaluacionV2(mejorSolucion);
+
+  	if(get<0>(rendimientoMejorSolucion) >= rendimientoMejorSolucionFinal){
+  		mejorSolucionFinal = mejorSolucion;
+  		rendimientoMejorSolucionFinal = get<0>(rendimientoMejorSolucion);
+  	}
+
+  } 
+
+  cout << endl;
+  cout << endl;
+  cout << "------------------------------------"<< endl;
+  cout << "Mejor solucion FINAL es, encontrada en la " << endl;
+  imprimir_sol(mejorSolucionFinal);
+  rendimientoMejorSolucion = funcion_evaluacionV2(mejorSolucionFinal);
+  cout << "factible: "<< es_factible(mejorSolucionFinal) << endl;
+  cout << "Bus mas lento: " << get<1>(rendimientoMejorSolucion) + 1 << " tiempo: "<< get<0>(rendimientoMejorSolucion) << endl;
+  cout << endl;
 
 }
 
