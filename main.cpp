@@ -22,6 +22,8 @@ vector<int> capacidadS;
 vector< vector<int> > distEstacionPtoEncuentro;
 vector< vector<int> > distPtoEncuentroRefugio;
 
+tuple<int, int, int> lastSWAP (-1, -1, -1); //(bus, elemento1, elemento2)
+
 // Funcion Trim ////////////////////////////////////////////////////////////////////////////////
 // Descripcion: elimina los espacios en blanco al inicio y al final de un string
 // fuente: JOSE
@@ -376,6 +378,52 @@ vector< vector< tuple<int, int> > > solucion_inicial(void){
 }
 
 vector< vector< tuple<int, int> > >  movimiento(vector< vector< tuple<int, int> > > candidatoSolucion){
+	vector< vector< tuple<int, int> > > vecino = candidatoSolucion;
+	tuple<int, int> busMasLento = funcion_evaluacionV2(candidatoSolucion);
+
+	if(get<1>(busMasLento) == get<0>(lastSWAP)){
+		if(get<2>(lastSWAP) + 1 < candidatoSolucion[get<1>(busMasLento)].size()){
+			swap(vecino[get<1>(busMasLento)][get<1>(lastSWAP)], vecino[get<1>(busMasLento)][get<2>(lastSWAP) + 1]);
+			get<2>(lastSWAP)++;
+		}
+		else if (get<1>(lastSWAP) < candidatoSolucion[get<1>(busMasLento)].size() - 2){
+			swap(vecino[get<1>(busMasLento)][get<1>(lastSWAP) + 1], vecino[get<1>(busMasLento)][get<1>(lastSWAP) + 2]);
+			get<1>(lastSWAP)++;
+			get<2>(lastSWAP) = get<1>(lastSWAP) + 1;
+		}
+		else{
+			get<1>(lastSWAP) = 0;
+			get<2>(lastSWAP) = 0;
+		}
+	}
+	else{
+		if(candidatoSolucion[get<1>(busMasLento)].size() == 1){//No hay nada que swapear
+			get<0>(lastSWAP) = get<1>(busMasLento);
+			get<1>(lastSWAP) = 0;
+			get<2>(lastSWAP) = 0;	
+		}
+		else{
+			swap(vecino[get<1>(busMasLento)][0], vecino[get<1>(busMasLento)][1]);
+			get<0>(lastSWAP) = get<1>(busMasLento);
+			get<1>(lastSWAP) = 0;
+			get<2>(lastSWAP) = 1;	
+		}
+
+	}
+
+	return vecino;	
+	/*
+	if(get<1>(busMasLento) == get<0>(lastSWAP)){
+		if(get<1>(lastSWAP)] != candidatoSolucion.size() && get<2>(lastSWAP)] <= candidatoSolucion.size()){
+			swap(vecino[get<1>(lastSWAP)], vecino[get<2>(lastSWAP)]);
+			if(get<2>(lastSWAP) == candidatoSolucion.size()){
+				get<1>(lastSWAP)++;
+				get<1>(lastSWAP);
+			}
+		}
+		
+	}
+	*/
 
 }
 
@@ -503,12 +551,14 @@ int main (int argc, char *argv[]){
     cout << endl;
   }
 
+  /*
   cout << endl;
   //vector< vector< tuple<int, int> > > instaciaDePrueba = {{tuple<int, int>(1,2), tuple<int, int>(2,0)}, {tuple<int, int>(2,1), tuple<int, int>(0,1)}, {tuple<int, int>(1,1)}};
   vector< vector< tuple<int, int> > > instaciaDePrueba = {{tuple<int, int>(0,0), tuple<int, int>(2,1)}, {tuple<int, int>(1,0), tuple<int, int>(2,1)}, {tuple<int, int>(1,2), tuple<int, int>(1,1), tuple<int, int>(2,1)}};
   cout << "prueba de evaluacion 2.0;" << endl;
   cout << get<0>(funcion_evaluacionV2(instaciaDePrueba)) << " " << get<1>(funcion_evaluacionV2(instaciaDePrueba))+1 << endl; 
   imprimir_sol(instaciaDePrueba);
+  cout << "Es factible: " << es_factible(instaciaDePrueba) << endl;
   vector< vector< tuple<int, int> > > candidato;
   cout << endl;
   cout << endl;
@@ -528,6 +578,41 @@ int main (int argc, char *argv[]){
   	imprimir_sol(candidato);
   	cout << endl;
   }
+*/
+  cout << endl;
+  cout << endl;
+
+  vector< vector< tuple<int, int> > > candidato;
+  tuple<int, int> maslargo; 
+
+  for(int i = 0; i < 4; ++i){
+  	candidato = solucion_inicial();
+  	cout << "factible: "<< es_factible(candidato) << endl;
+  	imprimir_sol(candidato);
+  	maslargo = funcion_evaluacionV2(candidato);
+  	cout << "Bus mas lento: " << get<1>(maslargo)+1 << " tiempo: "<< get<0>(maslargo) << endl;
+  	cout << endl;
+  	cout << endl;
+  }
+
+
+  /*
+  tuple<int, int> maslargo; 
+  vector< vector< tuple<int, int> > > vecino = solucion_inicial();
+
+  cout << "Movimientos: " << endl;
+  for(int i = 0; i < 5; i++){
+  	cout << i << ":  " << endl;
+  	imprimir_sol(vecino);
+  	cout << "factible: "<< es_factible(vecino) << endl;
+  	maslargo = funcion_evaluacionV2(vecino);
+  	cout << "Bus mas lento: " << get<1>(maslargo)+1 << " tiempo: "<< get<0>(maslargo) << endl;
+  	cout << endl;
+  	vecino = movimiento(vecino);
+  }
+  */
+
+ 
 
 }
 
