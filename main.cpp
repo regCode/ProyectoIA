@@ -634,9 +634,9 @@ int main (int argc, char *argv[]){
   vector< vector< tuple<int, int> > > vecino;
   vector< vector< tuple<int, int> > > mejorSolucionFinal;
  
-  int rendimientoMejorSolucionFinal = INT_MIN;
-  tuple<int, int> rendimientoMejorSolucion;
-  tuple<int, int> rendimientoVecino; 
+  int tiempoMejorSolucionFinal = INT_MIN;
+  tuple<int, int> tiempoMejorSolucion;
+  tuple<int, int> tiempoVecino; 
 
 
   for(int i = 0; i < restart; ++i){
@@ -649,26 +649,30 @@ int main (int argc, char *argv[]){
 		cout << endl;
 		cout << "Solucion Actual:"<< endl;
 		cout << contador << "." <<endl;
-		rendimientoMejorSolucion = funcion_evaluacionV2(mejorSolucion);
+		tiempoMejorSolucion = funcion_evaluacionV2(mejorSolucion);
   		imprimir_sol(mejorSolucion);
   		cout << "factible: "<< es_factible(mejorSolucion) << endl;
-  		cout << "Bus mas lento: " << get<1>(rendimientoMejorSolucion) + 1 << " tiempo: "<< get<0>(rendimientoMejorSolucion) << endl;
+  		cout << "Bus mas lento: " << get<1>(tiempoMejorSolucion) + 1 << " tiempo: "<< get<0>(tiempoMejorSolucion) << endl;
   		cout << endl;
   		cout << endl;
   		cout << "Vecinos"<< endl;
   		cout << "------------------------------------"<< endl;
   		do{
+  			cout << endl;
+  			cout << "original: (" << get<0>(lastSWAP) << ", " << get<1>(lastSWAP) << ", " << get<2>(lastSWAP) << ")" << endl; 
   			vecino = movimiento(mejorSolucion);
-  			rendimientoVecino = funcion_evaluacionV2(vecino);
+  			cout << "nuevo: (" << get<0>(lastSWAP) << ", " << get<1>(lastSWAP) << ", " << get<2>(lastSWAP) << ")" << endl; 
+  			cout << endl;
+  			tiempoVecino = funcion_evaluacionV2(vecino);
   			imprimir_sol(vecino);
   			cout << "factible: "<< es_factible(vecino) << endl;
-  			cout << "Bus mas lento: " << get<1>(rendimientoVecino) + 1 << " tiempo: "<< get<0>(rendimientoVecino) << endl;
+  			cout << "Bus mas lento: " << get<1>(tiempoVecino) + 1 << " tiempo: "<< get<0>(tiempoVecino) << endl;
   			cout << "¿Es mejor?: ";
-  			if(get<0>(rendimientoMejorSolucion) > get<0>(rendimientoVecino)){
+  			if(get<0>(tiempoMejorSolucion) < get<0>(tiempoVecino)){
   				cout << "NO" << endl;
   			}
 
-  			else if(get<0>(rendimientoMejorSolucion) < get<0>(rendimientoVecino)){
+  			else if(get<0>(tiempoMejorSolucion) > get<0>(tiempoVecino)){
   				cout << "SI" << endl;
   			}
   			else
@@ -676,7 +680,17 @@ int main (int argc, char *argv[]){
 
   			cout << endl;
 
-  		}while(get<0>(rendimientoMejorSolucion) > get<0>(rendimientoVecino) && get<1>(lastSWAP) != get<2>(lastSWAP));
+  		}while(get<0>(tiempoMejorSolucion) < get<0>(tiempoVecino) && get<1>(lastSWAP) != get<2>(lastSWAP));
+
+  		cout << endl;
+  		cout << "sali con: " << endl;
+  		cout << "tiempo mejor solucion: " << get<0>(tiempoMejorSolucion) << endl;
+  		cout << "tiempo vecino " << get<0>(tiempoVecino) << endl;
+  		cout << "last swap 1 " << get<1>(lastSWAP) << endl;
+  		cout << "last swap 2 " << get<2>(lastSWAP) << endl;
+  		cout << endl;
+  		cout << endl;
+
   		
   		if(get<1>(lastSWAP) == get<2>(lastSWAP)){ //No quedan vecinos por visitar
   			break;
@@ -695,14 +709,14 @@ int main (int argc, char *argv[]){
   	cout << "Mejor solucion en este ciclo, encontrada en la " << contador << " iteracion " << endl;
   	imprimir_sol(mejorSolucion);
   	cout << "factible: "<< es_factible(mejorSolucion) << endl;
-  	cout << "Bus mas lento: " << get<1>(rendimientoMejorSolucion) + 1 << " tiempo: "<< get<0>(rendimientoMejorSolucion) << endl;
+  	cout << "Bus mas lento: " << get<1>(tiempoMejorSolucion) + 1 << " tiempo: "<< get<0>(tiempoMejorSolucion) << endl;
   	cout << endl;
 
-  	rendimientoMejorSolucion = funcion_evaluacionV2(mejorSolucion);
+  	tiempoMejorSolucion = funcion_evaluacionV2(mejorSolucion);
 
-  	if(get<0>(rendimientoMejorSolucion) >= rendimientoMejorSolucionFinal){
+  	if(get<0>(tiempoMejorSolucion) >= tiempoMejorSolucionFinal){
   		mejorSolucionFinal = mejorSolucion;
-  		rendimientoMejorSolucionFinal = get<0>(rendimientoMejorSolucion);
+  		tiempoMejorSolucionFinal = get<0>(tiempoMejorSolucion);
   	}
 
   } 
@@ -712,9 +726,9 @@ int main (int argc, char *argv[]){
   cout << "------------------------------------"<< endl;
   cout << "Mejor solucion FINAL es, encontrada en la " << endl;
   imprimir_sol(mejorSolucionFinal);
-  rendimientoMejorSolucion = funcion_evaluacionV2(mejorSolucionFinal);
+  tiempoMejorSolucion = funcion_evaluacionV2(mejorSolucionFinal);
   cout << "factible: "<< es_factible(mejorSolucionFinal) << endl;
-  cout << "Bus mas lento: " << get<1>(rendimientoMejorSolucion) + 1 << " tiempo: "<< get<0>(rendimientoMejorSolucion) << endl;
+  cout << "Bus mas lento: " << get<1>(tiempoMejorSolucion) + 1 << " tiempo: "<< get<0>(tiempoMejorSolucion) << endl;
   cout << endl;
 
 }
