@@ -510,78 +510,123 @@ vector< vector< tuple<int, int> > > solucion_inicial_greedy(void){
 
 int main (int argc, char *argv[]){
 
-  srand (time(NULL));
+	int restart;
+	bool verboso;
 
-  lectura_instacia(argv[1]);
+	switch(argc){
+		case 1: 
+			cout << "Archivo de instacia faltante" << endl;
+			return 0;
+		case 2: 
+			restart = 1;
+			verboso = false;
+			break; 
+		case 3:
+			restart = atoi(argv[2]);
+			verboso = false;
+			break;
+		default: 
+			restart = atoi(argv[2]);
+			verboso = true;
+			break;
+	}
 
-  cout << "Los parametros son:" << endl;
-  cout << "B = " << B << " : Q = " << Q << endl;
-  cout << "E = " << E << " : ";
+	//cout << "restarts = " << restart << ", verboso = " << verboso << endl;
 
-  for(int i=0; i<busesEstacion.size(); ++i)
-    cout << busesEstacion[i] << "  ";
-  cout << endl;
+ 	srand (time(NULL));
 
-  cout << "P = " << P << " : PersonasTotalPE = " << personasTotalPE << " : ";
+  	try	{
+    	lectura_instacia(argv[1]);
+  	} catch (int e){
+    	cout << "Error al leer el archivo: " << e << endl;
+  	}
 
-  for(int i=0; i<personasPE.size(); ++i)
-    cout << personasPE[i] << "  ";
-  cout << endl;
+  	if(verboso){
+  		cout << "Los parametros son:" << endl;
+		cout << "B = " << B << " : Q = " << Q << endl;
+		cout << "E = " << E << " : ";
 
-  cout << "S = " << S << " : capacidadTotalS = " << capacidadTotalS << " : ";
+		for(int i=0; i<busesEstacion.size(); ++i)
+		cout << busesEstacion[i] << "  ";
+		cout << endl;
 
-  for(int i=0; i<capacidadS.size(); ++i)
-    cout << capacidadS[i] << "  ";
-  
-  cout << endl;
-  cout << endl;
+		cout << "P = " << P << " : PersonasTotalPE = " << personasTotalPE << " : ";
 
-  for(int i=0; i<distEstacionPtoEncuentro.size(); ++i){
-    cout << i+1 << " : ";
-    for(int j=0; j<distEstacionPtoEncuentro[i].size(); ++j){
-      cout << distEstacionPtoEncuentro[i][j] << "  ";
-    }
-    cout << endl;
-  }
+		for(int i=0; i<personasPE.size(); ++i)
+		cout << personasPE[i] << "  ";
+		cout << endl;
 
-  cout << endl;
+		cout << "S = " << S << " : capacidadTotalS = " << capacidadTotalS << " : ";
 
-  for(int i=0; i<distPtoEncuentroRefugio.size(); ++i){
-    cout << i+1 << " : ";
-    for(int j=0; j<distPtoEncuentroRefugio[i].size(); ++j){
-      cout << distPtoEncuentroRefugio[i][j] << "  ";
-    }
-    cout << endl;
-  }
+		for(int i=0; i<capacidadS.size(); ++i)
+		cout << capacidadS[i] << "  ";
 
-  /*
-  cout << endl;
-  //vector< vector< tuple<int, int> > > instaciaDePrueba = {{tuple<int, int>(1,2), tuple<int, int>(2,0)}, {tuple<int, int>(2,1), tuple<int, int>(0,1)}, {tuple<int, int>(1,1)}};
-  vector< vector< tuple<int, int> > > instaciaDePrueba = {{tuple<int, int>(0,0), tuple<int, int>(2,1)}, {tuple<int, int>(1,0), tuple<int, int>(2,1)}, {tuple<int, int>(1,2), tuple<int, int>(1,1), tuple<int, int>(2,1)}};
-  cout << "prueba de evaluacion 2.0;" << endl;
-  cout << get<0>(funcion_evaluacionV2(instaciaDePrueba)) << " " << get<1>(funcion_evaluacionV2(instaciaDePrueba))+1 << endl; 
-  imprimir_sol(instaciaDePrueba);
-  cout << "Es factible: " << es_factible(instaciaDePrueba) << endl;
-  vector< vector< tuple<int, int> > > candidato;
-  cout << endl;
-  cout << endl;
-  cout << "Es factible:" << endl;
-  candidato = solucion_inicial();
-  cout << es_factible(candidato) << endl;
-  cout << "Imprimiendo: " << endl;
-  cout << endl;
-  imprimir_sol(candidato);
+		cout << endl;
+		cout << endl;
 
-  cout << "Pruebas: " << endl;
-  cout << endl;
+		for(int i=0; i<distEstacionPtoEncuentro.size(); ++i){
+		cout << i+1 << " : ";
+		for(int j=0; j<distEstacionPtoEncuentro[i].size(); ++j){
+		  cout << distEstacionPtoEncuentro[i][j] << "  ";
+		}
+		cout << endl;
+		}
 
-  for(int i = 0; i < 3; ++i){
-  	candidato = solucion_inicial();
-  	cout << "factible: "<< es_factible(candidato) << endl;
-  	imprimir_sol(candidato);
-  	cout << endl;
-  }
-*/
+		cout << endl;
+
+		for(int i=0; i<distPtoEncuentroRefugio.size(); ++i){
+			cout << i+1 << " : ";
+			for(int j=0; j<distPtoEncuentroRefugio[i].size(); ++j){
+			  cout << distPtoEncuentroRefugio[i][j] << "  ";
+			}
+			cout << endl;
+		}
+
+		
+  	}
+
+
+		cout << "Los parametros son:" << endl;
+		cout << "B = " << B << " : Q = " << Q << endl;
+		cout << "E = " << E << " : ";
+
+		for(int i=0; i<busesEstacion.size(); ++i)
+		cout << busesEstacion[i] << "  ";
+		cout << endl;
+
+		cout << "P = " << P << " : PersonasTotalPE = " << personasTotalPE << " : ";
+
+		for(int i=0; i<personasPE.size(); ++i)
+		cout << personasPE[i] << "  ";
+		cout << endl;
+
+		cout << "S = " << S << " : capacidadTotalS = " << capacidadTotalS << " : ";
+
+		for(int i=0; i<capacidadS.size(); ++i)
+		cout << capacidadS[i] << "  ";
+
+		cout << endl;
+		cout << endl;
+
+		for(int i=0; i<distEstacionPtoEncuentro.size(); ++i){
+		cout << i+1 << " : ";
+		for(int j=0; j<distEstacionPtoEncuentro[i].size(); ++j){
+		  cout << distEstacionPtoEncuentro[i][j] << "  ";
+		}
+		cout << endl;
+		}
+
+		cout << endl;
+
+		for(int i=0; i<distPtoEncuentroRefugio.size(); ++i){
+			cout << i+1 << " : ";
+			for(int j=0; j<distPtoEncuentroRefugio[i].size(); ++j){
+			  cout << distPtoEncuentroRefugio[i][j] << "  ";
+			}
+		cout << endl;
+		}
+
+
   cout << endl;
   cout << endl;
 
@@ -625,8 +670,6 @@ int main (int argc, char *argv[]){
   cout << "HILL CLIMBING:"<< endl;
   cout << "------------------------------------"<< endl;
 
-  int restart = 1000;
-
   cout << "Se utilizaran: " << restart << endl;
   cout << "------------------------------------"<< endl;
 
@@ -657,6 +700,7 @@ int main (int argc, char *argv[]){
   		cout << endl;
   		cout << "Vecinos"<< endl;
   		cout << "------------------------------------"<< endl;
+  		lastSWAP  = make_tuple(-1, 0, 1);
   		do{
   			cout << endl;
   			cout << "original: (ordinal->" << get<0>(lastSWAP) + 1 << ", " << get<1>(lastSWAP) << ", " << get<2>(lastSWAP) << ")" << endl; 
@@ -676,11 +720,11 @@ int main (int argc, char *argv[]){
   				cout << "SI" << endl;
   			}
   			else
-  				cout << "IGUAL pero se acepta" << endl;
+  				cout << "IGUAL y se rechaza" << endl;
 
   			cout << endl;
 
-  		}while(get<0>(tiempoMejorSolucion) < get<0>(tiempoVecino) && get<1>(lastSWAP) != get<2>(lastSWAP));
+  		}while(get<0>(tiempoMejorSolucion) <= get<0>(tiempoVecino) && get<1>(lastSWAP) != get<2>(lastSWAP));
 
   		cout << endl;
   		cout << "sali con: " << endl;
