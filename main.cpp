@@ -625,7 +625,7 @@ int main (int argc, char *argv[]){
   cout << "HILL CLIMBING:"<< endl;
   cout << "------------------------------------"<< endl;
 
-  int restart = 1;
+  int restart = 1000;
 
   cout << "Se utilizaran: " << restart << endl;
   cout << "------------------------------------"<< endl;
@@ -634,7 +634,7 @@ int main (int argc, char *argv[]){
   vector< vector< tuple<int, int> > > vecino;
   vector< vector< tuple<int, int> > > mejorSolucionFinal;
  
-  int tiempoMejorSolucionFinal = INT_MIN;
+  int tiempoMejorSolucionFinal = INT_MAX;
   tuple<int, int> tiempoMejorSolucion;
   tuple<int, int> tiempoVecino; 
 
@@ -659,9 +659,9 @@ int main (int argc, char *argv[]){
   		cout << "------------------------------------"<< endl;
   		do{
   			cout << endl;
-  			cout << "original: (" << get<0>(lastSWAP) << ", " << get<1>(lastSWAP) << ", " << get<2>(lastSWAP) << ")" << endl; 
+  			cout << "original: (ordinal->" << get<0>(lastSWAP) + 1 << ", " << get<1>(lastSWAP) << ", " << get<2>(lastSWAP) << ")" << endl; 
   			vecino = movimiento(mejorSolucion);
-  			cout << "nuevo: (" << get<0>(lastSWAP) << ", " << get<1>(lastSWAP) << ", " << get<2>(lastSWAP) << ")" << endl; 
+  			cout << "nuevo: (ordinal->" << get<0>(lastSWAP)+ 1 << ", " << get<1>(lastSWAP) << ", " << get<2>(lastSWAP) << ")" << endl; 
   			cout << endl;
   			tiempoVecino = funcion_evaluacionV2(vecino);
   			imprimir_sol(vecino);
@@ -714,7 +714,7 @@ int main (int argc, char *argv[]){
 
   	tiempoMejorSolucion = funcion_evaluacionV2(mejorSolucion);
 
-  	if(get<0>(tiempoMejorSolucion) >= tiempoMejorSolucionFinal){
+  	if(get<0>(tiempoMejorSolucion) <= tiempoMejorSolucionFinal){
   		mejorSolucionFinal = mejorSolucion;
   		tiempoMejorSolucionFinal = get<0>(tiempoMejorSolucion);
   	}
