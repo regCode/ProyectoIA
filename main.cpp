@@ -7,6 +7,7 @@
 #include <math.h>
 #include <tuple>
 #include <climits>
+#include <algorithm>
 #include <time.h>
 
 using namespace std;
@@ -73,18 +74,98 @@ vector<string> split(string str, char delimiter) {
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 vector<int> obtener_lista(string str) {
-  str = trim(str);
-  vector<int> internal;
-  stringstream ss(str); // Turn the string into a stream.
-  string tok;
-  
-  while(getline(ss, tok, ' ')) {
-    tok = trim(tok);
-    internal.push_back(atoi(tok.c_str()));
-  }
-  
-  return internal;
+	str = trim(str);
+	vector<int> internal;
+	stringstream ss(str); // Turn the string into a stream.
+	string tok;
+
+	while(getline(ss, tok, ' ')) {
+		tok = trim(tok);
+		internal.push_back(atoi(tok.c_str()));
+	}
+
+	return internal;
 }
+
+//////////////////////||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+void imprimirVector(vector<int> lista){
+	cout << endl;
+	for(int i = 0; i < lista.size(); ++i)
+		cout << lista[i] << "  ";
+	cout << endl;
+}
+
+vector< int > tiempo_buses(vector< vector< tuple<int, int> > > solucion){
+	
+	vector< int > tiempo(B, 0);
+	vector<int> busesRestantes = busesEstacion; 
+
+	for(int i = 0; i < solucion.size(); ++i){ //Bus i
+		for(int j = 0; j < solucion[i].size(); ++j){ //Arco (p, s)
+			if(j == 0){ //Sale de la estacion
+				for(int w = 0; w < E; ++w){ //Buscamos la primera estacion disponible
+					if(busesRestantes[w] > 0){
+						tiempo[i] += distEstacionPtoEncuentro[w][get<0>(solucion[i][j])]; //Tiempo desde 
+						busesRestantes[w]--;
+						break;
+					}
+				}
+				tiempo[i] += distPtoEncuentroRefugio[get<0>(solucion[i][j])][get<1>(solucion[i][j])];
+			}
+			else{
+				tiempo[i] += distPtoEncuentroRefugio[get<0>(solucion[i][j])][get<1>(solucion[i][j-1])];
+				tiempo[i] += distPtoEncuentroRefugio[get<0>(solucion[i][j])][get<1>(solucion[i][j])];
+			}
+		}
+	}
+
+	return tiempo;
+}
+
+void escritura_solucion(vector< vector< tuple<int, int> > > solucion, char *nombre){
+	
+	string nombreArchivo = nombre;
+	nombreArchivo.replace(nombreArchivo.end()-4, nombreArchivo.end(), ".output");
+	
+	cout << nombreArchivo << endl;
+	ofstream solucionFile(nombreArchivo);
+
+	if(solucionFile.is_open()){
+
+		vector< int > tiempo = tiempo_buses(solucion);
+	
+		for(int i = 0; i < solucion.size(); ++i){
+			cout << " "<< i+1 << "  ";
+			cout << tiempo[i] << "  ";
+			for(int j = 0; j < solucion[i].size(); ++j){
+				cout << "(" << get<0>(solucion[i][j])+1 << "," << get<1>(solucion[i][j])+1 << ")  ";
+			}
+
+			cout << endl;
+		}
+
+		int tiempoMaximo = *max_element(tiempo.begin(), tiempo.end());
+		for(int i = 0; i < tiempo.size(); ++i){
+			if(tiempo[i] == tiempoMaximo)
+				cout << i+1 << " ";
+		}
+
+		cout<<endl;
+
+		
+	}
+
+	else 
+		cout << "No se pudo crear el archivo " << nombreArchivo << endl;
+
+
+
+	solucionFile.close();
+}
+
+
+//////////////////////////////////////
 
 void lectura_instacia(char *archivo){
   
@@ -145,18 +226,15 @@ void lectura_instacia(char *archivo){
       data = split(line, ':');
       distPtoEncuentroRefugio.push_back(obtener_lista(data[1]));
     }
+
+    instanciaFile.close();
   }
 
-  else cout << "No se pudo abrir el archivo " << archivo << endl;
+  else 
+  	cout << "No se pudo abrir el archivo " << archivo << endl;
 
 }
 
-void imprimirVector(vector<int> lista){
-	cout << endl;
-	for(int i = 0; i < lista.size(); ++i)
-		cout << lista[i] << "  ";
-	cout << endl;
-}
 
 void imprimir_sol(vector< vector< tuple<int, int> > > solInicial){
 	for(int i = 0; i < solInicial.size(); ++i){
@@ -398,6 +476,7 @@ vector< vector< tuple<int, int> > >  movimiento(vector< vector< tuple<int, int> 
 
 }
 
+
 int main (int argc, char *argv[]){
 
 	int restart;
@@ -408,7 +487,7 @@ int main (int argc, char *argv[]){
 			cout << "Archivo de instacia faltante" << endl;
 			return 0;
 		case 2: 
-			restart = 1;
+			restart = 10000;
 			verboso = false;
 			break; 
 		case 3:
@@ -430,6 +509,15 @@ int main (int argc, char *argv[]){
   	} catch (int e){
     	cout << "Error al leer el archivo: " << e << endl;
   	}
+
+  	vector< vector< tuple<int, int> > > mejorSolucion;
+	vector< vector< tuple<int, int> > > vecino;
+	vector< vector< tuple<int, int> > > mejorSolucionFinal;
+
+	int tiempoMejorSolucionFinal = INT_MAX;
+	tuple<int, int> tiempoMejorSolucion;
+	tuple<int, int> tiempoVecino; 
+
 
   	if(verboso){
   		cout << endl;
@@ -482,14 +570,6 @@ int main (int argc, char *argv[]){
 
 		cout << "Numero de restart: " << restart << endl;
 		cout << "------------------------------------"<< endl;
-
-		vector< vector< tuple<int, int> > > mejorSolucion;
-		vector< vector< tuple<int, int> > > vecino;
-		vector< vector< tuple<int, int> > > mejorSolucionFinal;
-
-		int tiempoMejorSolucionFinal = INT_MAX;
-		tuple<int, int> tiempoMejorSolucion;
-		tuple<int, int> tiempoVecino; 
 
 		for(int i = 0; i < restart; ++i){
 			
@@ -587,19 +667,9 @@ int main (int argc, char *argv[]){
 		//cout << "factible: "<< es_factible(mejorSolucionFinal) << endl;
 		cout << "Bus mas lento: " << get<1>(tiempoMejorSolucion) + 1 << " tiempo: "<< get<0>(tiempoMejorSolucion) << endl;
 		cout << endl;
-
-		return 0;
 		
   	}
   	else{
-
-  		vector< vector< tuple<int, int> > > mejorSolucion;
-		vector< vector< tuple<int, int> > > vecino;
-		vector< vector< tuple<int, int> > > mejorSolucionFinal;
-
-		int tiempoMejorSolucionFinal = INT_MAX;
-		tuple<int, int> tiempoMejorSolucion;
-		tuple<int, int> tiempoVecino; 
 
 		for(int i = 0; i < restart; ++i){
 		
@@ -647,10 +717,11 @@ int main (int argc, char *argv[]){
 		cout << "Bus mas lento: " << get<1>(tiempoMejorSolucion) + 1 << " tiempo: "<< get<0>(tiempoMejorSolucion) << endl;
 		cout << endl;
 		*/
-		
-		return 0;
-
   	}
+
+  	escritura_solucion(mejorSolucionFinal, argv[1]);
+
+  	return 0;
 
 
 
