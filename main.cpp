@@ -29,22 +29,29 @@ vector< vector<int> > distPtoEncuentroRefugio;
 tuple<int, int, int> lastSWAP (-1, 0, 1); //(bus, elemento1, elemento2)
 
 
-// Funcion Trim ////////////////////////////////////////////////////////////////////////////////
-// Descripcion: elimina los espacios en blanco al inicio y al final de un string
-// fuente: https://gist.github.com/dedeexe/9080526
-// fecha: 24/06/201
+// Funcion Loading ////////////////////////////////////////////////////////////////////////////////
+// Descripcion: en caso de no ser de impresion verbosa, imprime un mensaje de loading, en un hilo.
+// fuente: https://solarianprogrammer.com/2011/12/16/cpp-11-thread-tutorial/
+// fuente: https://stackoverflow.com/questions/8486181/how-to-make-a-loading-animation-in-console-application-written-in-c
+// fecha: 28/06/2017
 
 int loading = true;
 
 void call_from_thread() {
-	cout << "Loading Please Wait";
+	cout << "Solving Please Wait";
     while (loading){
         sleep(1);
         cout << "." << flush;
+        if(!loading)
+        	break;
         sleep(1);
         cout << "." << flush;
+        if(!loading)
+        	break;
         sleep(1);
         cout << "." << flush;
+        if(!loading)
+        	break;
         sleep(1);
         cout << "\b\b\b   \b\b\b" << flush;
     }
