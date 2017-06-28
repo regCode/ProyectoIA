@@ -9,6 +9,8 @@
 #include <climits>
 #include <algorithm>
 #include <time.h>
+#include <unistd.h> // for sleep()
+#include <thread>
 
 using namespace std;
 
@@ -25,6 +27,30 @@ vector< vector<int> > distEstacionPtoEncuentro;
 vector< vector<int> > distPtoEncuentroRefugio;
 
 tuple<int, int, int> lastSWAP (-1, 0, 1); //(bus, elemento1, elemento2)
+
+
+// Funcion Trim ////////////////////////////////////////////////////////////////////////////////
+// Descripcion: elimina los espacios en blanco al inicio y al final de un string
+// fuente: https://gist.github.com/dedeexe/9080526
+// fecha: 24/06/201
+
+int loading = true;
+
+void call_from_thread() {
+	cout << "Loading Please Wait";
+    while (loading){
+        sleep(1);
+        cout << "." << flush;
+        sleep(1);
+        cout << "." << flush;
+        sleep(1);
+        cout << "." << flush;
+        sleep(1);
+        cout << "\b\b\b   \b\b\b" << flush;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Funcion Trim ////////////////////////////////////////////////////////////////////////////////
 // Descripcion: elimina los espacios en blanco al inicio y al final de un string
@@ -86,8 +112,6 @@ vector<int> obtener_lista(string str) {
 
 	return internal;
 }
-
-//////////////////////||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 void imprimirVector(vector<int> lista){
 	cout << endl;
@@ -214,9 +238,6 @@ void escritura_solucion(vector< vector< tuple<int, int> > > solucion, char *nomb
 
 }
 
-
-//////////////////////////////////////
-
 void lectura_instacia(char *archivo){
   
   ifstream instanciaFile(archivo);
@@ -329,7 +350,7 @@ bool es_factible(vector< vector< tuple<int, int> > > candidatoSolucion){
 
 	for(int i = 0; i < personasPorSalvar.size(); ++i){
 		if(personasPorSalvar[i] > 0){
-			cout << "quedan " << personasPorSalvar[i] << " personas en el punto " << i+1 <<endl;
+			cout << "quedan " << personasPorSalvar[i] << " personas en el punto " << i+1 << endl;
 			return false;
 		}
 	}
@@ -531,6 +552,8 @@ vector< vector< tuple<int, int> > >  movimiento(vector< vector< tuple<int, int> 
 
 int main (int argc, char *argv[]){
 
+	int start_s = clock();
+
 	int restart;
 	bool verboso;
 
@@ -723,6 +746,8 @@ int main (int argc, char *argv[]){
   	}
   	else{
 
+  		thread t1(call_from_thread);
+
 		for(int i = 0; i < restart; ++i){
 		
 			lastSWAP  = make_tuple(-1, 0, 1);
@@ -758,6 +783,13 @@ int main (int argc, char *argv[]){
 
   		} 
 
+  		loading = false;
+  		t1.join();
+
+  		cout << '\r';
+  		cout << "                           ";
+  		cout << '\r';
+
 		/*
 		cout << endl;
 		cout << endl;
@@ -773,6 +805,13 @@ int main (int argc, char *argv[]){
 
   	escritura_solucion(mejorSolucionFinal, argv[1]);
 
+  	
+  	int stop_s = clock();
+
+ 	cout << "time: " << (stop_s-start_s)/double(CLOCKS_PER_SEC)  << "[s]" << endl;
+
   	return 0;
 
 }
+
+//g++ -std=c++11 -pthread -o lectura  main.cpp
