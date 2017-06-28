@@ -161,7 +161,7 @@ void escritura_solucion(vector< vector< tuple<int, int> > > solucion, char *nomb
 	string nombreArchivo = nombre;
 	nombreArchivo.replace(nombreArchivo.end()-4, nombreArchivo.end(), ".output");
 	
-	cout << nombreArchivo << endl;
+	//cout << nombreArchivo << endl;
 	ofstream solucionFile(nombreArchivo);
 
 	if(solucionFile.is_open()){
@@ -178,32 +178,32 @@ void escritura_solucion(vector< vector< tuple<int, int> > > solucion, char *nomb
 		int j;
 
 		for(int i = 0; i < solucion.size(); ++i){
-			cout << " "<< i+1 << "  ";
-			cout << tiempo[i] << "  ";
+			solucionFile << " "<< i+1 << "  ";
+			solucionFile << tiempo[i] << "  ";
 			for(j = 0; j < solucion[i].size(); ++j){
-				cout << "(" << get<0>(solucion[i][j])+1 << "," << get<1>(solucion[i][j])+1 << ")  ";
+				solucionFile << "(" << get<0>(solucion[i][j])+1 << "," << get<1>(solucion[i][j])+1 << ")  ";
 			}
 
 			while(j < mayorCantidadArcos){
-				cout << "- ";
+				solucionFile << "-   ";
 				j++;
 			}
 
-			cout << endl;
+			solucionFile << endl;
 		}
 
 		int tiempoMaximo = *max_element(tiempo.begin(), tiempo.end());
 		for(int i = 0; i < tiempo.size(); ++i){
 			if(tiempo[i] == tiempoMaximo)
-				cout << i+1 << " ";
+				solucionFile << i+1 << " ";
 		}
 
-		cout<<endl;
+		solucionFile<<endl;
 		
 		vector<int> personarRefugiadas = personas_refugiadas(solucion);
 
 		for(int i = 0; i < personarRefugiadas.size(); ++i)
-			cout << personarRefugiadas[i] << endl;
+			solucionFile << personarRefugiadas[i] << endl;
 
 		solucionFile.close();
 
@@ -290,7 +290,9 @@ void imprimir_sol(vector< vector< tuple<int, int> > > solInicial){
 	for(int i = 0; i < solInicial.size(); ++i){
 		cout << i+1 << ": ";
 		for(int j = 0; j < solInicial[i].size(); ++j){
-			cout << "(" << get<0>(solInicial[i][j])+1 << "," << get<1>(solInicial[i][j])+1 << "), ";  
+			cout << "(" << get<0>(solInicial[i][j])+1 << "," << get<1>(solInicial[i][j])+1 << ")";
+			if(j+1 != solInicial[i].size())
+				cout << ", ";
 		}
 		cout << endl;
 	}
