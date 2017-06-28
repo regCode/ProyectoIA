@@ -123,6 +123,39 @@ vector< int > tiempo_buses(vector< vector< tuple<int, int> > > solucion){
 	return tiempo;
 }
 
+vector<int> personas_refugiadas(vector< vector< tuple<int, int> > > candidatoSolucion){
+	
+	vector<int> personasPorSalvar = personasPE;
+	vector<int> capacidadRestante = capacidadS;
+
+	int genteBus;
+
+	for(int i = 0; i < candidatoSolucion.size(); ++i){
+		for(int j = 0; j < candidatoSolucion[i].size(); ++j){
+			
+			if(personasPorSalvar[get<0>(candidatoSolucion[i][j])] == 0){ //No sebe ir a un pto de encuento vacio 
+				cout << "el punto de encuento " << get<0>(candidatoSolucion[i][j])+1 << " esta vacio " << endl;
+			}
+			else if(personasPorSalvar[get<0>(candidatoSolucion[i][j])] < Q){
+				genteBus = personasPorSalvar[get<0>(candidatoSolucion[i][j])];
+			} 
+			else{
+				genteBus = Q;
+			}
+
+			personasPorSalvar[get<0>(candidatoSolucion[i][j])]-= genteBus;
+			capacidadRestante[get<1>(candidatoSolucion[i][j])]-= genteBus;
+		}
+	}
+
+	vector<int> result;
+    result.reserve(capacidadS.size());
+
+	transform(capacidadS.begin(), capacidadS.end(), capacidadRestante.begin(), back_inserter(result), minus<int>());
+
+	return result;
+}
+
 void escritura_solucion(vector< vector< tuple<int, int> > > solucion, char *nombre){
 	
 	string nombreArchivo = nombre;
@@ -133,13 +166,27 @@ void escritura_solucion(vector< vector< tuple<int, int> > > solucion, char *nomb
 
 	if(solucionFile.is_open()){
 
-		vector< int > tiempo = tiempo_buses(solucion);
+		vector<int> tiempo = tiempo_buses(solucion);
+
+		vector<int> cantidadArcos;
+		for(int i = 0; i < solucion.size(); ++i){
+			cantidadArcos.push_back(solucion[i].size());
+		}
+
+		int mayorCantidadArcos = *max_element(cantidadArcos.begin(), cantidadArcos.end());
 	
+		int j;
+
 		for(int i = 0; i < solucion.size(); ++i){
 			cout << " "<< i+1 << "  ";
 			cout << tiempo[i] << "  ";
-			for(int j = 0; j < solucion[i].size(); ++j){
+			for(j = 0; j < solucion[i].size(); ++j){
 				cout << "(" << get<0>(solucion[i][j])+1 << "," << get<1>(solucion[i][j])+1 << ")  ";
+			}
+
+			while(j < mayorCantidadArcos){
+				cout << "- ";
+				j++;
 			}
 
 			cout << endl;
@@ -152,16 +199,19 @@ void escritura_solucion(vector< vector< tuple<int, int> > > solucion, char *nomb
 		}
 
 		cout<<endl;
-
 		
+		vector<int> personarRefugiadas = personas_refugiadas(solucion);
+
+		for(int i = 0; i < personarRefugiadas.size(); ++i)
+			cout << personarRefugiadas[i] << endl;
+
+		solucionFile.close();
+
 	}
 
 	else 
 		cout << "No se pudo crear el archivo " << nombreArchivo << endl;
 
-
-
-	solucionFile.close();
 }
 
 
@@ -585,7 +635,7 @@ int main (int argc, char *argv[]){
 				cout << endl;
 				tiempoMejorSolucion = funcion_evaluacionV2(mejorSolucion);
 				imprimir_sol(mejorSolucion);
-				//cout << "factible: "<< es_factible(mejorSolucion) << endl;
+				cout << "factible: "<< es_factible(mejorSolucion) << endl;
 				cout << "Bus mas lento: " << get<1>(tiempoMejorSolucion) + 1 << " tiempo: "<< get<0>(tiempoMejorSolucion) << endl;
 				cout << endl;
 				cout << endl;
@@ -602,7 +652,7 @@ int main (int argc, char *argv[]){
 					cout << endl;
 					tiempoVecino = funcion_evaluacionV2(vecino);
 					imprimir_sol(vecino);
-					//cout << "factible: "<< es_factible(vecino) << endl;
+					cout << "factible: "<< es_factible(vecino) << endl;
 					cout << "Bus mas lento: " << get<1>(tiempoVecino) + 1 << " tiempo: "<< get<0>(tiempoVecino) << endl;
 					cout << "¿Es mejor?: ";
 					if(get<0>(tiempoMejorSolucion) < get<0>(tiempoVecino))
@@ -645,7 +695,7 @@ int main (int argc, char *argv[]){
 			cout << "Nueva mejor solucion encontrada en la " << contador << " iteracion " << endl;
 			cout << endl;
 			imprimir_sol(mejorSolucion);
-			//cout << "factible: "<< es_factible(mejorSolucion) << endl;
+			cout << "factible: "<< es_factible(mejorSolucion) << endl;
 			cout << "Bus mas lento: " << get<1>(tiempoMejorSolucion) + 1 << " tiempo: "<< get<0>(tiempoMejorSolucion) << endl;
 			cout << endl;
 
@@ -664,7 +714,7 @@ int main (int argc, char *argv[]){
 		cout << "Mejor solucion encontrada luego de "<< restart << " restart"<< endl;
 		imprimir_sol(mejorSolucionFinal);
 		tiempoMejorSolucion = funcion_evaluacionV2(mejorSolucionFinal);
-		//cout << "factible: "<< es_factible(mejorSolucionFinal) << endl;
+		cout << "factible: "<< es_factible(mejorSolucionFinal) << endl;
 		cout << "Bus mas lento: " << get<1>(tiempoMejorSolucion) + 1 << " tiempo: "<< get<0>(tiempoMejorSolucion) << endl;
 		cout << endl;
 		
@@ -722,8 +772,5 @@ int main (int argc, char *argv[]){
   	escritura_solucion(mejorSolucionFinal, argv[1]);
 
   	return 0;
-
-
-
 
 }
