@@ -514,6 +514,17 @@ vector< vector< tuple<int, int> > > solucion_inicial(void){
 		}
 	}
 
+	int cambios = rand() % 50;
+	int filaUno;
+	int filaDos;
+
+	for(int i = 0; i < cambios; ++i){
+		filaUno = rand() % solInicial.size();
+		filaDos = rand() % solInicial.size();
+		if(filaUno != filaDos)
+			swap(solInicial[filaUno], solInicial[filaDos]);
+	}
+
 	return solInicial;
 
 }
